@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Instrumentation;
+using System.Net.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -31,8 +33,8 @@ namespace MatchGame
         int matchesFound;
         // in-code timer that counts how many matches have been found. I will try to implement this into my Rec Room Game so that a full wave has to
         // be beat instead of the mini-boss.
-        float lowestTime;
-        float elapsedTime;
+        float lowestTimetenthsOfSecond;
+        float elapsedtime;
 
 
         public MainWindow()
@@ -48,13 +50,30 @@ namespace MatchGame
         {
             tenthsOfSecondsElapsed++;
             timeTextBlock.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
-            timeTextBlockBest.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
+            timeTextBlockBest.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s - Best");
+            lowestTimetenthsOfSecond = (tenthsOfSecondsElapsed / 10F);
+            elapsedtime = (tenthsOfSecondsElapsed / 10F);
+            
             if (matchesFound == 8)
             {
                 //When the timer stops it will display "- Play again?" next to the time it took the player to match all 8 pairs.
                 timer.Stop();
                 timeTextBlock.Text = timeTextBlock.Text + " - Play again?";
                 timeTextBlockBest.Text = timeTextBlockBest.Text + " - Best Time";
+                if (lowestTimetenthsOfSecond >= elapsedtime)
+                {
+                    timeTextBlockBest.Text = elapsedtime.ToString();
+
+                }
+                else
+                {
+                    
+                    timeTextBlockBest.Text = lowestTimetenthsOfSecond.ToString();
+
+
+                }
+
+                
 
             }
         }
@@ -64,7 +83,7 @@ namespace MatchGame
             List<string> animalEmoji = new List<string>()
             {
             "🐱‍", "🐱‍",
-            "🐺", "🐺",
+            "🐲", "🐲",
             "🐗", "🐗",
             "🐮", "🐮",
             "🐨", "🐨",
@@ -72,7 +91,18 @@ namespace MatchGame
             "🦊", "🦊",
             "🐵", "🐵",
             };
-            //TODO: Replace the Fox or the Wolf. They are too visually similar.
+            List<string> objectEmoji = new List<string>()
+            {
+            "🎈", "🎈",
+            "🎁", "🎁",
+            "🎄", "🎄",
+            "🎟", "🎟",
+            "🎃", "🎃",
+            "🎨", "🎨",
+            "🏆", "🏆",
+            "🧱", "🧱",
+            };
+            //TODO: Make this second set actually appear
             //List of Characters or Emojis that the game chooses from, if you are going to replace one, make sure to replace both in the line with the same-
             //-emoji or character with the same formatting.
             Random random = new Random();
@@ -90,6 +120,7 @@ namespace MatchGame
                 timer.Start();
                 tenthsOfSecondsElapsed = 0;
                 matchesFound = 0;
+;
             }
         }
 
@@ -112,7 +143,6 @@ namespace MatchGame
             {
                 lastTextBlockClicked.Visibility = Visibility.Visible;
                 findingMatch = false;
-
             }
         }
 
