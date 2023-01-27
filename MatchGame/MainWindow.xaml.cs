@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Instrumentation;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,8 +34,7 @@ namespace MatchGame
         int matchesFound;
         // in-code timer that counts how many matches have been found. I will try to implement this into my Rec Room Game so that a full wave has to
         // be beat instead of the mini-boss.
-        float lowestTimetenthsOfSecond;
-        float elapsedtime;
+        public float lowestTimetenthsOfSecond = 50000;
 
 
         public MainWindow()
@@ -50,35 +50,27 @@ namespace MatchGame
         {
             tenthsOfSecondsElapsed++;
             timeTextBlock.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
-            timeTextBlockBest.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s - Best");
-            lowestTimetenthsOfSecond = (tenthsOfSecondsElapsed / 10F);
-            elapsedtime = (tenthsOfSecondsElapsed / 10F);
-            
+
             if (matchesFound == 8)
             {
                 //When the timer stops it will display "- Play again?" next to the time it took the player to match all 8 pairs.
                 timer.Stop();
                 timeTextBlock.Text = timeTextBlock.Text + " - Play again?";
-                timeTextBlockBest.Text = timeTextBlockBest.Text + " - Best Time";
-                if (lowestTimetenthsOfSecond >= elapsedtime)
+                if (tenthsOfSecondsElapsed < lowestTimetenthsOfSecond)
                 {
-                    timeTextBlockBest.Text = elapsedtime.ToString();
-
+                    lowestTimetenthsOfSecond = tenthsOfSecondsElapsed;
+                    timeTextBlockBest.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s - Best");
                 }
-                else
-                {
-                    
-                    timeTextBlockBest.Text = lowestTimetenthsOfSecond.ToString();
-
-
-                }
-
-                
 
             }
         }
 
         private void SetUpGame()
+        {
+            SetUpGame(new Random());
+        }
+
+        private void SetUpGame(Random randomlist)
         {
             List<string> animalEmoji = new List<string>()
             {
@@ -102,6 +94,7 @@ namespace MatchGame
             "🏆", "🏆",
             "🧱", "🧱",
             };
+           
             //TODO: Make this second set actually appear
             //List of Characters or Emojis that the game chooses from, if you are going to replace one, make sure to replace both in the line with the same-
             //-emoji or character with the same formatting.
@@ -120,10 +113,8 @@ namespace MatchGame
                 timer.Start();
                 tenthsOfSecondsElapsed = 0;
                 matchesFound = 0;
-;
             }
         }
-
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
         {
             //When a TextBlock is clicked it runs a check to see if the second textblock matches and acts accordingly
@@ -158,9 +149,9 @@ namespace MatchGame
         private void TimeTextBlockBest_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (matchesFound == 8)
-            { 
-                SetUpGame();           
+            {
+                SetUpGame();
             }
         }
     }
-    }
+}
